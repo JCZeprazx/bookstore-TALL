@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Shipping extends Model
 {
     use HasFactory;
 
-    public function user()
+    public function orders()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Order::class);
     }
 }

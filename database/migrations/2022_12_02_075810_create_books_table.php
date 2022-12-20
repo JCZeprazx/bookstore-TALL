@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('book_cost');
             $table->integer('total_stock');
             $table->integer('total_sold')->default('0');
-            $table->string('book_cover');
+            $table->string('book_cover')->nullable();
             $table->timestamps();
 
             $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');

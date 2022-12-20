@@ -25,8 +25,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'role',
         'email',
         'password',
+        'address',
+        'city',
+        'region',
+        'country'
     ];
 
     /**
@@ -59,8 +64,8 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function role()
+    public function orders()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Book::class, 'orders', 'user_id', 'book_id');
     }
 }

@@ -32,13 +32,14 @@
                             <!-- Navigation Links -->
                             <div
                                 class="hidden sm:flex space-x-8 sm:-my-px sm:ml-10  sm:justify-between sm:items-center sm:w-full ">
-                                <div class="gap-3 flex w-full">
+                                <div class="gap-10 flex w-full">
                                     <x-jet-nav-link href="{{ route('landing-page') }}"
                                         :active="request()->routeIs('landing-page')">
                                         {{ __('Home') }}
                                     </x-jet-nav-link>
-                                    <x-jet-nav-link>
-                                        {{ __('Book') }}
+                                    <x-jet-nav-link href="{{ route('shop') }}"
+                                    :active="request()->routeIs('shop')">
+                                        {{ __('Shop') }}
                                     </x-jet-nav-link>
                                     <x-jet-nav-link>
                                         {{ __('About') }}
@@ -98,7 +99,7 @@
             {{ $slot }}
         </div>
     </div>
-    
+
 </body>
 
 </html>
