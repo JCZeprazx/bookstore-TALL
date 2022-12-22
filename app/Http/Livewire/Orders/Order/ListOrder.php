@@ -32,24 +32,54 @@ class ListOrder extends Component
 
     public function listOrder()
     {
-        $book = Book_Order::where('order_id', '=', $this->getOrder()->id)->first();
-        if ( $book == null) {
-            return null;
+        if ($this->getOrder() !== null) {
+            $book = Book_Order::where('order_id', '=', $this->getOrder())->first();
+            if($book !== null){
+                $list_order = Book::find($book->book_id)
+                    ->join('book_order', 'book_order.book_id', '=', 'books.id')
+                    ->join('orders', 'orders.id', '=', 'book_order.order_id')
+                    ->get(['books.*', 'book_order.quantity', 'orders.status_id']);
+                if ($book == null) {
+                    return null;
+                } else {
+                    return $list_order->filter(function ($value, $key) {
+                        if ($value['status_id'] == 2) {
+                            return $value;
+                        }
+                    });
+                }
+            } else {
+                return null;
+            }
         } else {
-            return Book::find($book->book_id)
-            ->join('book_order', 'book_order.book_id', '=', 'books.id')
-            ->get(['books.*', 'book_order.quantity']);
+            return null;
         }
     }
 
     public function getTotalCost()
     {
-        if (Book_Order::where('order_id', '=', $this->getOrder()->id)->exists()) {
-            $cost = Book_Order::where('order_id', '=', $this->getOrder()->id)
-                ->first();
-            $cost_book = Book::where('id', '=', $cost->book_id)
-                ->get();
-            return $this->getQuantity() * $cost_book[0]->book_cost + $this->shippingCost($this->getOrder()->id)->cost_shipping;
+        if ($this->getOrder() !== null) {
+            if (Book_Order::where('order_id', '=', $this->getOrder())->exists()) {
+                $order = Book_Order::where('order_id', '=', $this->getOrder())
+                    ->join('orders', 'orders.id', '=', 'book_order.order_id')
+                    ->join('books', 'books.id', '=', 'book_order.book_id')
+                    ->get([
+                        'book_order.*',
+                        'books.book_cost',
+                        'orders.shipping_id'
+                    ]);
+                return $this->getQuantity() * $order->value('book_cost')
+                        + Shipping::find($order->first(function($value) {
+                            if($value['shipping_id'] == null){
+                                return 0;
+                            } else {
+                                return $value['shipping_id'];
+                            }
+                        })
+                    )->first()->cost_shipping;
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -57,8 +87,10 @@ class ListOrder extends Component
 
     public function getQuantity()
     {
-        return Book_Order::where('order_id', '=', $this->getOrder()->id)
+        if ($this->getOrder() !== null) {
+            return Book_Order::where('order_id', '=', $this->getOrder())
                 ->sum('quantity');
+        }
     }
 
     public function getOrder()
@@ -66,16 +98,36 @@ class ListOrder extends Component
         if (Order::where('user_id', Auth::id())->first() == null) {
             return Order::create([
                 'user_id' => Auth::id()
-            ])->first();
+            ])->id;
         } else {
-            return Order::where('user_id', '=', Auth::id())->first();
+            if (Order::where('status_id', '=', '2')->exists()) {
+                return Order::where('status_id', '=', '2')->first()->id;
+            } else {
+                return null;
+            }
         }
     }
 
     public function getListOrder()
     {
-        $order_id = $this->getOrder()->id;
-        return Book_Order::where('order_id', '=', $order_id)->get();
+        return Book_Order::where('order_id', '=', $this->getOrder())->get();
+    }
+
+    public function shippingCost($id)
+    {
+        return Order::find($id)
+            ->join('shippings', 'orders.shipping_id', '=', 'shippings.id')
+            ->first();
+    }
+
+    public function userAddress()
+    {
+        return User::find(Auth::id())->get([
+            'address',
+            'city',
+            'region',
+            'country'
+        ]);
     }
 
     public function save()
@@ -87,17 +139,10 @@ class ListOrder extends Component
             'country' => $this->country,
         ]);
 
-        Order::find($this->getOrder()->id)->update([
+        Order::find($this->getOrder())->update([
             'payment_id' => $this->payment_id,
             'shipping_id' => $this->shipping_id
         ]);
-    }
-
-    public function shippingCost($id)
-    {
-        return Order::find($id)
-                    ->join('shippings', 'orders.shipping_id', '=', 'shippings.id')
-                    ->first();
     }
 
     public function delete()
@@ -109,7 +154,7 @@ class ListOrder extends Component
     public function render()
     {
         return view('livewire.orders.order.list-order', [
-            'user_order' => $this->getOrder(),
+            'user_address' => $this->userAddress(),
             'cost_total' => $this->getTotalCost(),
             'orders' => $this->listOrder(),
             'quantity' => $this->getQuantity(),

@@ -15,6 +15,12 @@
                             Order Status
                         </th>
                         <th scope="col" class="py-3 px-6">
+                            Quantity
+                        </th>
+                        <th scope="col" class="py-3 px-6">
+                            Total Cost
+                        </th>
+                        <th scope="col" class="py-3 px-6">
                             Action
                         </th>
                     </tr>
@@ -32,6 +38,10 @@
                             <th scope="row"
                                 class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ $data->order_status }}
+                            </th>
+                            <th scope="row"
+                                class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ $data->quantity }}
                             </th>
                             <th class="row">
                                 <x-jet-button wire:click="updateShowModal({{ $data->id }})"
@@ -52,4 +62,42 @@
             </div>
         </div>
     </div>
+    <x-jet-dialog-modal wire:model="modalFormVisible">
+        <x-slot name="title">
+            {{ __('Update Data') }}
+        </x-slot>
+
+        <x-slot name="content">
+
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click="$toggle('modalFormVisible')" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-jet-secondary-button>
+
+            <x-jet-button class="ml-3" wire:click="update" wire:loading.attr="disabled">
+                {{ __('Update Data') }}
+            </x-jet-button>
+        </x-slot>
+    </x-jet-dialog-modal>
+    <x-jet-dialog-modal wire:model="modalConfirmDeleteVisible">
+        <x-slot name="title">
+            {{ __('Delete Data') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to delete your data? Once your data is deleted, all of its resources and data will be permanently deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click="$toggle('modalConfirmDeleteVisible')" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-jet-secondary-button>
+
+            <x-jet-danger-button class="ml-3" wire:click="delete" wire:loading.attr="disabled">
+                {{ __('Delete Data') }}
+            </x-jet-danger-button>
+        </x-slot>
+    </x-jet-dialog-modal>
 </div>

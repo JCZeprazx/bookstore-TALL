@@ -9,21 +9,21 @@
                             <span class="w-10 h-10 bg-blue-700 rounded-full"></span>
                             <h2 class="ml-4 font-medium text-gray-900">List Book</h2>
                         </div>
-                        <div>
-                            <p class="text-2xl font-medium tracking-tight text-gray-900">
-                                Total Rp {{ $cost_total }}
-                            </p>
-                            <p class="mt-1 text-sm text-gray-600">For the purchase of {{ $quantity }} items</p>
-                        </div>
+                        @if ($orders !== null)
+                            <div>
+                                <p class="text-2xl font-medium tracking-tight text-gray-900">
+                                    Total Rp {{ $cost_total }}
+                                </p>
+                                <p class="mt-1 text-sm text-gray-600">For the purchase of {{ $quantity }} items</p>
+                            </div>
+                            <div>
+                                <div class="flow-root">
 
-                        <div>
-                            <div class="flow-root">
-                                @if ($orders !== null)
                                     @foreach ($orders as $order)
                                         <ul class="-my-4 divide-y divide-gray-100">
                                             <li class="flex items-center py-4">
                                                 <img src="{{ asset('storage/book/' . $order->book_cover) }}"
-                                                    alt="" class="object-cover w-16 rounded" />
+                                                    alt="1" class="object-cover w-16 rounded" />
 
                                                 <div class="ml-4">
                                                     <h3 class="text-sm text-gray-900">{{ $order->book_name }}</h3>
@@ -51,9 +51,10 @@
                                             </li>
                                         </ul>
                                     @endforeach
-                                @endif
+
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -81,6 +82,7 @@
                 <div class="py-12 bg-white-500 md:py-24">
                     <div class="max-w-lg px-4 mx-auto lg:px-8">
                         <form class="grid grid-cols-6 gap-4" wire:submit.prevent='save'>
+                            @if (empty($user_address))
                             <div class="col-span-6">
                                 <x-jet-label for="address" value="{{ __('Address') }}" />
                                 <x-jet-input id="address" class="block mt-1 w-full" type="text"
@@ -101,6 +103,7 @@
                                 <x-jet-input id="country" class="block mt-1 w-full" type="text"
                                     value="{{ Auth::user()->country }}" wire:model='country' />
                             </div>
+                            @endif
                             <div class="col-span-6">
                                 <x-jet-label for="Payment" value="{{ __('Payment') }}" />
                                 <select id="Payment"
