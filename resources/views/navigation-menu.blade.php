@@ -15,6 +15,26 @@
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('product') }}" :active="request()->routeIs('product')">
+                        {{ __('Shop') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('order') }}" :active="request()->routeIs('order')">
+                        {{ __('Order') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('about') }}" :active="request()->routeIs('about')">
+                        {{ __('About') }}
+                    </x-jet-nav-link>
+                    @if ( auth()->user()->role == 'admin' )
+                    <x-jet-nav-link href="{{ route('manage-books') }}" :active="request()->routeIs('manage-books')">
+                        {{ __('Manage Books') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('manage-orders') }}" :active="request()->routeIs('manage-orders')">
+                        {{ __('Manage Orders') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('statistic') }}" :active="request()->routeIs('statistic')">
+                        {{ __('Statistic') }}
+                    </x-jet-nav-link>
+                    @endif
                 </div>
             </div>
 
