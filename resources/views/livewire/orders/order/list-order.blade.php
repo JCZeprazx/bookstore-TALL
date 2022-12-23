@@ -81,64 +81,130 @@
 
                 <div class="py-12 bg-white-500 md:py-24">
                     <div class="max-w-lg px-4 mx-auto lg:px-8">
-                        <form class="grid grid-cols-6 gap-4" wire:submit.prevent='save'>
-                            @if (empty($user_address))
-                            <div class="col-span-6">
-                                <x-jet-label for="address" value="{{ __('Address') }}" />
-                                <x-jet-input id="address" class="block mt-1 w-full" type="text"
-                                    value="{{ Auth::user()->address }}" wire:model='address' />
+                        @if ($user_address == null)
+                            <form class="grid grid-cols-6 gap-4" wire:submit.prevent='save'>
+                                <div class="col-span-6">
+                                    <x-jet-label for="address" value="{{ __('Address') }}" />
+                                    <x-jet-input id="address" class="block mt-1 w-full" type="text"
+                                        value="{{ Auth::user()->address }}" wire:model='address' />
+                                </div>
+                                <div class="col-span-6">
+                                    <x-jet-label for="city" value="{{ __('City') }}" />
+                                    <x-jet-input id="city" class="block mt-1 w-full" type="text"
+                                        value="{{ Auth::user()->city }}" wire:model='city' />
+                                </div>
+                                <div class="col-span-6">
+                                    <x-jet-label for="region" value="{{ __('Region') }}" />
+                                    <x-jet-input id="region" class="block mt-1 w-full" type="text"
+                                        value="{{ Auth::user()->region }}" wire:model='region' />
+                                </div>
+                                <div class="col-span-6">
+                                    <x-jet-label for="country" value="{{ __('Country') }}" />
+                                    <x-jet-input id="country" class="block mt-1 w-full" type="text"
+                                        value="{{ Auth::user()->country }}" wire:model='country' />
+                                </div>
+                                <div class="col-span-6">
+                                    <x-jet-button>Update</x-jet-button>
+                                </div>
+                            </form>
+                        @endif
+                        @if ($user_method->payment_id == null && $user_method->shipping_id == null)
+                            <x-jet-button class="my-3" wire:click='createShowModal'>
+                                Select Payment and Shipping
+                            </x-jet-button>
+                        @else
+                            <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800"
+                                role="alert">
+                                <span class="font-medium">Payment Info</span>
+                                @foreach ($payments as $payment)
+                                    @if ($payment->id == $user_method->payment_id)
+                                        <p>{{ $payment->payment_method . ' = ' . $payment->payment_info }}</p>
+                                    @endif
+                                @endforeach
+                                <x-jet-button wire:click='uploadImage'>
+                                    Kirim
+                                </x-jet-button>
                             </div>
-                            <div class="col-span-6">
-                                <x-jet-label for="city" value="{{ __('City') }}" />
-                                <x-jet-input id="city" class="block mt-1 w-full" type="text"
-                                    value="{{ Auth::user()->city }}" wire:model='city' />
-                            </div>
-                            <div class="col-span-6">
-                                <x-jet-label for="region" value="{{ __('Region') }}" />
-                                <x-jet-input id="region" class="block mt-1 w-full" type="text"
-                                    value="{{ Auth::user()->region }}" wire:model='region' />
-                            </div>
-                            <div class="col-span-6">
-                                <x-jet-label for="country" value="{{ __('Country') }}" />
-                                <x-jet-input id="country" class="block mt-1 w-full" type="text"
-                                    value="{{ Auth::user()->country }}" wire:model='country' />
-                            </div>
-                            @endif
-                            <div class="col-span-6">
-                                <x-jet-label for="Payment" value="{{ __('Payment') }}" />
-                                <select id="Payment"
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm form-multipleselect"
-                                    wire:model="payment_id">
-                                    <option selected="" value="null">Payment</option>
-                                    @foreach ($payments as $payment)
-                                        <option value="{{ $payment->id }}">
-                                            {{ $payment->payment_method }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-span-6">
-                                <x-jet-label for="Shipping" value="{{ __('Shipping') }}" />
-                                <select id="Shipping"
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm form-multipleselect"
-                                    wire:model="shipping_id">
-                                    <option selected="" value="null">Shipping</option>
-                                    @foreach ($shippings as $shipping)
-                                        <option value="{{ $shipping->id }}">
-                                            {{ $shipping->shipping_method }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-span-6">
-                                <button
-                                    class="block w-full rounded-md bg-black p-2.5 text-sm text-white transition hover:shadow-lg">
-                                    Pay Now
-                                </button>
-                            </div>
-                        </form>
+                        @endif
                     </div>
                 </div>
             </div>
         </section>
+        <x-jet-dialog-modal wire:model="modalFormVisible">
+            <x-slot name="title">
+                {{ __('Select Payment And Shipping') }}
+            </x-slot>
+
+            <x-slot name="content">
+                <div>
+                    <div>
+                        <x-jet-label for="Shippings" value="{{ __('Shippings') }}" />
+                        <select id="Shippings"
+                            class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                            wire:model='shipping_id'>
+                            <option selected="" value="null">Shippings</option>
+                            @foreach ($shippings as $shipping)
+                                <option value="{{ $shipping->id }}">
+                                    {{ $shipping->shipping_method }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <x-jet-label class="my-2" for="Payments" value="{{ __('Payments') }}" />
+                        <select id="Payments"
+                            class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
+                            wire:model='payment_id'>
+                            <option selected="" value="null">Payment</option>
+                            @foreach ($payments as $payment)
+                                <option value="{{ $payment->id }}">
+                                    {{ $payment->payment_method }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-jet-secondary-button wire:click="$toggle('modalFormVisible')" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-jet-secondary-button>
+
+                <x-jet-button class="ml-3" wire:click="updateMethod" wire:loading.attr="disabled">
+                    {{ __('Add Data') }}
+                </x-jet-button>
+            </x-slot>
+        </x-jet-dialog-modal>
+
+        <x-jet-dialog-modal wire:model="modalFormImage">
+            <x-slot name="title">
+                {{ __('Upload Your Image') }}
+            </x-slot>
+
+            <x-slot name="content">
+                <div>
+                    @error('image')
+                        <div class="p-4 mb-4 mt-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                            role="alert">
+                            <span class="font-medium">{{ $message }}</span>
+                        </div>
+                    @enderror
+                    <div class="my-3">
+                        <x-jet-label for="transfer" value="{{ __('Bukti Transfer') }}" />
+                        <x-jet-input id="transfer" class="block mt-1 w-full" type="file" wire:model='image' />
+                    </div>
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-jet-secondary-button wire:click="$toggle('modalFormImage')" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-jet-secondary-button>
+
+                <x-jet-button class="ml-3" wire:click="pay" wire:loading.attr="disabled">
+                    {{ __('Add Data') }}
+                </x-jet-button>
+            </x-slot>
+        </x-jet-dialog-modal>
     </main>
 </div>

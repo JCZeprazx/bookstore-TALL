@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('shipping_id')->nullable();
             $table->unsignedBigInteger('payment_id')->nullable();
-            $table->unsignedBigInteger('status_id')->default(1);
+            $table->unsignedBigInteger('status_id')->default(2);
             $table->string('image')->nullable();
             $table->integer('cost_total')->nullable();
             $table->timestamps();

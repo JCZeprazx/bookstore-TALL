@@ -43,6 +43,10 @@
                                 class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ $data->quantity }}
                             </th>
+                            <th scope="row"
+                                class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ $data }}
+                            </th>
                             <th class="row">
                                 <x-jet-button wire:click="updateShowModal({{ $data->id }})"
                                     wire:loading.attr="disabled">

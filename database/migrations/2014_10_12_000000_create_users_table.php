@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('api_key');
+            // $table->string('api_key');
             $table->string('role')->default('user');
             $table->string('name');
             $table->string('email')->unique();
