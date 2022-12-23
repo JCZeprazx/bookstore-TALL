@@ -10,12 +10,17 @@ use Livewire\Component;
 use App\Models\Shipping;
 use App\Models\Book_Order;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
 
 class ListOrder extends Component
 {
+    use WithFileUploads;
+
     public $book_id;
     public $payment_id;
     public $shipping_id;
+
+    public $image;
 
     public $address;
     public $city;
@@ -23,6 +28,18 @@ class ListOrder extends Component
     public $country;
 
     public $modalConfirmDeleteVisible = false;
+    public $modalFormVisible = false;
+    public $modalFormImage = false;
+
+    public function uploadImage()
+    {
+        $this->modalFormImage = true;
+    }
+
+    public function createShowModal()
+    {
+        $this->modalFormVisible = true;
+    }
 
     public function deleteShowModal($id)
     {
@@ -30,11 +47,25 @@ class ListOrder extends Component
         $this->modalConfirmDeleteVisible = true;
     }
 
+    public function rules()
+    {
+        return [
+            'image' => 'required'
+        ];
+    }
+
+    public function updated($image)
+    {
+        $this->validateOnly($image, [
+            'image' => 'required'
+        ]);
+    }
+
     public function listOrder()
     {
         if ($this->getOrder() !== null) {
             $book = Book_Order::where('order_id', '=', $this->getOrder())->first();
-            if($book !== null){
+            if ($book !== null) {
                 $list_order = Book::find($book->book_id)
                     ->join('book_order', 'book_order.book_id', '=', 'books.id')
                     ->join('orders', 'orders.id', '=', 'book_order.order_id')
@@ -68,15 +99,7 @@ class ListOrder extends Component
                         'books.book_cost',
                         'orders.shipping_id'
                     ]);
-                return $this->getQuantity() * $order->value('book_cost')
-                        + Shipping::find($order->first(function($value) {
-                            if($value['shipping_id'] == null){
-                                return 0;
-                            } else {
-                                return $value['shipping_id'];
-                            }
-                        })
-                    )->first()->cost_shipping;
+                return $this->getQuantity() * $order->value('book_cost') + Shipping::find($order->value('shipping_id'))->cost_shipping;
             } else {
                 return 0;
             }
@@ -130,6 +153,15 @@ class ListOrder extends Component
         ]);
     }
 
+    public function userMethod()
+    {
+        return Order::where('id', '=', $this->getOrder())
+                ->first([
+                    'payment_id',
+                    'shipping_id'
+                ]);
+    }
+
     public function save()
     {
         User::find(Auth::id())->update([
@@ -138,11 +170,25 @@ class ListOrder extends Component
             'region' => $this->region,
             'country' => $this->country,
         ]);
+    }
 
+    public function updateMethod()
+    {
         Order::find($this->getOrder())->update([
             'payment_id' => $this->payment_id,
             'shipping_id' => $this->shipping_id
         ]);
+
+        $this->modalFormVisible = false;
+    }
+
+    public function pay()
+    {
+        $this->validate();
+        Order::find($this->getOrder())->update([
+            'image' => ($this->image->getClientOriginalName() . '-' . Auth::user()->name . '-' . now())]);
+        $this->image->store('bukti_pembayaran');
+        $this->modalFormImage = false;
     }
 
     public function delete()
@@ -155,6 +201,7 @@ class ListOrder extends Component
     {
         return view('livewire.orders.order.list-order', [
             'user_address' => $this->userAddress(),
+            'user_method' => $this->userMethod(),
             'cost_total' => $this->getTotalCost(),
             'orders' => $this->listOrder(),
             'quantity' => $this->getQuantity(),
