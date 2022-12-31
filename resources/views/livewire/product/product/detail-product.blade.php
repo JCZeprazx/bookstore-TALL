@@ -11,14 +11,14 @@
                 <div class="grid items-start grid-cols-1 gap-8 md:grid-cols-2">
                     <!-- Foto Produk mulai -->
                     <div class="grid grid-cols-2 gap-4 md:grid-cols-1">
-                        <img alt="Les Paul" src="{{ asset('storage/book/' . $book->book_cover) }}"
+                        <img alt="Les Paul" src="{{ asset('storage/' . $book->book_cover) }}"
                             class="object-cover w-full rounded-xl" />
                     </div>
                     <!-- Foto produk akhir -->
 
                     <!-- Detail Produk Mulai -->
                     <div class="sticky top-0">
-                        @foreach ($book->categories as $category)
+                        @foreach ($book->category as $category)
                             <strong
                                 class="rounded-full border border-blue-600 bg-gray-100 px-3 py-0.5 text-xs font-medium tracking-wide text-blue-600">
                                 {{ $category->category_name }}
@@ -30,9 +30,9 @@
                                 <h1 class="text-2xl font-bold">
                                     {{ $book->book_name }}
                                 </h1>
-                                @foreach ($book->authors as $author)
+                                @foreach ($book->author as $author)
                                     <p class="mt-0.5 text-sm">
-                                        {{ $author->author_firstname . ' ' . $author->author_lastname }}</p>
+                                        {{ $author->author_name }}</p>
                                 @endforeach
                             </div>
 

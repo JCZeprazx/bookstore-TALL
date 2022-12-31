@@ -23,17 +23,17 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function payments()
+    public function payment()
     {
         return $this->belongsTo(Payment::class);
     }
 
-    public function shippings()
+    public function shipping()
     {
         return $this->belongsTo(Shipping::class);
     }
 
-    public function statuses()
+    public function status()
     {
         return $this->belongsTo(Status::class);
     }

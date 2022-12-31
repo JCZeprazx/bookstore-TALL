@@ -41,7 +41,8 @@
                                     :active="request()->routeIs('shop')">
                                         {{ __('Shop') }}
                                     </x-jet-nav-link>
-                                    <x-jet-nav-link>
+                                    <x-jet-nav-link href="{{ route('about-guest') }}"
+                                    :active="request()->routeIs('about-guest')">
                                         {{ __('About') }}
                                     </x-jet-nav-link>
                                 </div>
@@ -74,10 +75,10 @@
                         <x-jet-responsive-nav-link href="{{ route('landing-page') }}" :active="request()->routeIs('landing-page')">
                             {{ __('Home') }}
                         </x-jet-responsive-nav-link>
-                        <x-jet-responsive-nav-link >
-                            {{ __('Book') }}
+                        <x-jet-responsive-nav-link href="{{ route('shop') }}" :active="request()->routeIs('shop')">
+                            {{ __('Shop') }}
                         </x-jet-responsive-nav-link>
-                        <x-jet-responsive-nav-link>
+                        <x-jet-responsive-nav-link href="{{ route('about-guest') }}" :active="request()->routeIs('about-guest')">
                             {{ __('About') }}
                         </x-jet-responsive-nav-link>
                     </div>
@@ -96,7 +97,13 @@
                 </div>
             </nav>
 
-            {{ $slot }}
+            <main>
+                @yield('content')
+            </main>
+
+            <footer>
+                @yield('footer')
+            </footer>
         </div>
     </div>
 

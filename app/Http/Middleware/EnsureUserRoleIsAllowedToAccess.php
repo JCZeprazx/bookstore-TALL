@@ -52,6 +52,7 @@ class EnsureUserRoleIsAllowedToAccess
                 'manage-books',
                 'statistic',
                 'product/',
+                'admin/'
             ]
         ];
     }

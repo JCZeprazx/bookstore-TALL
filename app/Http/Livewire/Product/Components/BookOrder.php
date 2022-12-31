@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Book_Order;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class BookOrder extends Component
 {
@@ -80,8 +81,10 @@ class BookOrder extends Component
                     ->updateExistingPivot($this->userOrder(), [
                         'quantity' => $this->count
                     ]);
+                    Alert::success('Success Title', 'Sukses Menambah');
             } else {
                 Book_Order::create($this->modelDataBook());
+                Alert::success('Success Title', 'Menambah Keranjang');
             }
         } else {
             Book_Order::create([
@@ -91,6 +94,7 @@ class BookOrder extends Component
                             ])->id,
                 'quantity' => $this->count
             ]);
+            Alert::success('Success Title', 'Sukses Membuat Order');
         }
 
         $this->modalFormVisible = false;

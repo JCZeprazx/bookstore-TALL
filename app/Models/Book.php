@@ -18,8 +18,6 @@ class Book extends Model
         'language_id',
         'publisher_id',
         'book_cost',
-        'total_stock',
-        'total_sold',
         'book_cover'
     ];
 
@@ -33,17 +31,17 @@ class Book extends Model
         return $this->belongsTo(Language::class);
     }
 
-    public function authors()
+    public function author()
     {
         return $this->belongsToMany(Author::class, 'book_author', 'book_id', 'author_id');
     }
 
-    public function categories()
+    public function category()
     {
         return $this->belongsToMany(Category::class, 'book_category', 'book_id', 'category_id');
     }
 
-    public function orders()
+    public function order()
     {
         return $this->belongsToMany(Order::class, 'book_order', 'book_id', 'order_id');
     }

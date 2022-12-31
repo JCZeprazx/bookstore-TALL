@@ -1,4 +1,5 @@
 <div>
+    @include('sweetalert::alert')
     <x-jet-button wire:click="createShowModal">
         {{ __('Buy Book') }}
     </x-jet-button>
@@ -15,7 +16,7 @@
                 <div class="grid items-start grid-cols-1 gap-4 sm:grid-cols-6">
                     <!-- Foto Produk mulai -->
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-1 sm:col-span-2">
-                        <img alt="Les Paul" src="{{ asset('storage/book/' . $preview->book_cover) }}"
+                        <img alt="Les Paul" src="{{ asset('storage/' . $preview->book_cover) }}"
                             class="object-cover w-3/4 rounded-xl" />
                     </div>
                     <div class="grid grid-rows-3 h-full items-center col-span-2">

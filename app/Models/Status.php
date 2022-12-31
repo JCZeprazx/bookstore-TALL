@@ -9,7 +9,7 @@ class Status extends Model
 {
     use HasFactory;
 
-    public function orders()
+    public function order()
     {
         return $this->hasMany(Order::class);
     }

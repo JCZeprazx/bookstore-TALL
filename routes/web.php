@@ -5,10 +5,14 @@ use App\Http\Livewire\About\AboutIndex;
 use App\Http\Livewire\Orders\OrderIndex;
 use App\Http\Livewire\Product\ProductIndex;
 use App\Http\Livewire\Statistic\StatisticIndex;
+use App\Http\Livewire\LandingPage\Shop\ShopIndex;
+use App\Http\Livewire\LandingPage\LandingPageIndex;
 use App\Http\Livewire\ManageBooks\ManageBooksIndex;
 use App\Http\Livewire\ManageOrders\ManageOrderIndex;
-use App\Http\Livewire\Dashboard\User\DashboardUserIndex;
 use App\Http\Livewire\Product\Product\DetailProduct;
+use App\Http\Livewire\Dashboard\User\DashboardUserIndex;
+use App\Http\Livewire\LandingPage\About\AboutGuestIndex;
+use App\Http\Livewire\LandingPage\Shop\DetailProductIndex;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,20 +25,14 @@ use App\Http\Livewire\Product\Product\DetailProduct;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('landing-page');
-
-
-
+Route::get('/', LandingPageIndex::class)->name('landing-page');
+Route::get('/about-guest', AboutGuestIndex::class)->name('about-guest');
 Route::prefix('/shop')->group(function () {
-    Route::get('/', function () {
-        return view('shop');
-    })->name('shop');
-    Route::get('/detail', function () {
-        return view('details');
-    })->name('details');
+    Route::get('/', ShopIndex::class)->name('shop');
+    Route::get('/{slug}', DetailProductIndex::class)->name('shop/');
 });
+
+
 
 Route::middleware([
     'auth:sanctum',
@@ -52,5 +50,4 @@ Route::middleware([
     Route::get('/manage-orders', ManageOrderIndex::class)->name('manage-orders');
     Route::get('/statistic', StatisticIndex::class)->name('statistic');
     Route::get('/about', AboutIndex::class)->name('about');
-
 });

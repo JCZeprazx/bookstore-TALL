@@ -10,6 +10,7 @@ use Livewire\Component;
 use App\Models\Shipping;
 use App\Models\Book_Order;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 use Livewire\WithFileUploads;
 
 class ListOrder extends Component
@@ -19,6 +20,8 @@ class ListOrder extends Component
     public $book_id;
     public $payment_id;
     public $shipping_id;
+
+    public $total_stock;
 
     public $image;
 
@@ -99,7 +102,8 @@ class ListOrder extends Component
                         'books.book_cost',
                         'orders.shipping_id'
                     ]);
-                return $this->getQuantity() * $order->value('book_cost') + Shipping::find($order->value('shipping_id'))->cost_shipping;
+                $shipping = $order->value('shipping_id') !== null ? Shipping::find($order->value('shipping_id'))->cost_shipping : 0;
+                return $this->getQuantity() * $order->value('book_cost') + $shipping;
             } else {
                 return 0;
             }
@@ -145,21 +149,44 @@ class ListOrder extends Component
 
     public function userAddress()
     {
-        return User::find(Auth::id())->get([
-            'address',
-            'city',
-            'region',
-            'country'
-        ]);
+        $user = User::where('id', '=', Auth::id())
+            ->first([
+                'address',
+                'city',
+                'region',
+                'country'
+            ]);
+        if ($user !== null) {
+            return $user;
+        } else {
+            return null;
+        }
+    }
+
+    public function checkingPayment()
+    {
+        if ($this->getOrder() !== null) {
+            $order = Order::find($this->getOrder())->get('image');
+            if ($order->contains('image')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public function userMethod()
     {
-        return Order::where('id', '=', $this->getOrder())
-                ->first([
-                    'payment_id',
-                    'shipping_id'
-                ]);
+        $shipping = Order::where('id', '=', $this->getOrder())
+            ->first([
+                'payment_id',
+                'shipping_id'
+            ]);
+        if ($shipping !== null) {
+            return $shipping;
+        } else {
+            return null;
+        }
     }
 
     public function save()
@@ -170,6 +197,7 @@ class ListOrder extends Component
             'region' => $this->region,
             'country' => $this->country,
         ]);
+        Alert::success('Success Title', 'Success Menyimpan');
     }
 
     public function updateMethod()
@@ -178,23 +206,28 @@ class ListOrder extends Component
             'payment_id' => $this->payment_id,
             'shipping_id' => $this->shipping_id
         ]);
-
         $this->modalFormVisible = false;
+        Alert::success('Success Title', 'Success Menyimpan');
     }
 
     public function pay()
     {
         $this->validate();
         Order::find($this->getOrder())->update([
-            'image' => ($this->image->getClientOriginalName() . '-' . Auth::user()->name . '-' . now())]);
-        $this->image->store('bukti_pembayaran');
+            'image' => ('bukti_pembayaran/' . $this->image->getClientOriginalName()),
+            'cost_total' => $this->getTotalCost(),
+        ]);
+        $this->image->storeAs('bukti_pembayaran', 'bukti_pembayaran/' . $this->image->getClientOriginalName());
+        // $book = Book::find((Book_Order::where('order_id', '=', $this->getOrder())->pluck('book_id')));
         $this->modalFormImage = false;
+        Alert::success('Success Title', 'Success Membayar, Mohon tunggu konfirmasi admin');
     }
 
     public function delete()
     {
-        Book::find($this->book_id)->orders()->detach();
+        Book::find($this->book_id)->order()->detach();
         $this->modalConfirmDeleteVisible = false;
+        Alert::toast('Toast Message', 'Item Telah Dihapus');
     }
 
     public function render()
@@ -206,7 +239,8 @@ class ListOrder extends Component
             'orders' => $this->listOrder(),
             'quantity' => $this->getQuantity(),
             'payments' => Payment::all(),
-            'shippings' => Shipping::all()
+            'shippings' => Shipping::all(),
+            'checking' => $this->checkingPayment()
         ]);
     }
 }
