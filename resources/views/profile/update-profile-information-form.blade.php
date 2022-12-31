@@ -59,6 +59,12 @@
             <x-jet-input-error for="name" class="mt-2" />
         </div>
 
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="api-key" value="{{ __('API Key') }}" />
+            <x-jet-input id="api-key" type="text" class="mt-1 block w-full" wire:model.defer="state.api_key" autocomplete="name" />
+            <x-jet-input-error for="api-key" class="mt-2" />
+        </div>
+
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="email" value="{{ __('Email') }}" />

@@ -24,17 +24,6 @@
                     <x-jet-nav-link href="{{ route('about') }}" :active="request()->routeIs('about')">
                         {{ __('About') }}
                     </x-jet-nav-link>
-                    @if ( auth()->user()->role == 'admin' )
-                    <x-jet-nav-link href="{{ route('manage-books') }}" :active="request()->routeIs('manage-books')">
-                        {{ __('Manage Books') }}
-                    </x-jet-nav-link>
-                    <x-jet-nav-link href="{{ route('manage-orders') }}" :active="request()->routeIs('manage-orders')">
-                        {{ __('Manage Orders') }}
-                    </x-jet-nav-link>
-                    <x-jet-nav-link href="{{ route('statistic') }}" :active="request()->routeIs('statistic')">
-                        {{ __('Statistic') }}
-                    </x-jet-nav-link>
-                    @endif
                 </div>
             </div>
 
@@ -119,6 +108,12 @@
                             <x-jet-dropdown-link href="{{ route('profile.show') }}">
                                 {{ __('Profile') }}
                             </x-jet-dropdown-link>
+
+                            @if (Auth::user()->role == 'admin')
+                            <x-jet-dropdown-link href="admin/login">
+                                {{ __('Admin Panel') }}
+                            </x-jet-dropdown-link>
+                            @endif
 
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-jet-dropdown-link href="{{ route('api-tokens.index') }}">

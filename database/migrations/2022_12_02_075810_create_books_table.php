@@ -23,8 +23,6 @@ return new class extends Migration
             $table->unsignedBigInteger('language_id');
             $table->unsignedBigInteger('publisher_id');
             $table->integer('book_cost');
-            $table->integer('total_stock');
-            $table->integer('total_sold')->default('0');
             $table->string('book_cover')->nullable();
             $table->timestamps();
 

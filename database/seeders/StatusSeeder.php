@@ -17,5 +17,6 @@ class StatusSeeder extends Seeder
     {
         Status::create(['order_status' => 'Completed']);
         Status::create(['order_status' => 'Not Completed']);
+        Status::create(['order_status' => 'Cancelled']);
     }
 }
